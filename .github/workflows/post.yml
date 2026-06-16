@@ -3,13 +3,15 @@ name: Instagram Auto Post
 on:
   schedule:
     - cron: '0 23 * * *'  # JST 8:00 (UTC 23:00 前日)
-    - cron: '0 9 * * *'   # JST 18:00 (UTC 9:00)
   workflow_dispatch:
     inputs:
       post_index:
-        description: 'posts.json の何番目を投稿するか (0始まり)'
+        description: 'posts.json の何番目を投稿するか (0始まり、空欄なら自動)'
         required: false
         default: ''
+
+permissions:
+  contents: write
 
 jobs:
   post:
@@ -26,13 +28,9 @@ jobs:
         run: pip install requests
 
       - name: Determine post index
-        id: index
         run: |
-          # 手動実行時は入力値を使用、スケジュール実行時は変数から取得
           if [ -n "${{ github.event.inputs.post_index }}" ]; then
             echo "POST_INDEX=${{ github.event.inputs.post_index }}" >> $GITHUB_ENV
-          else
-            echo "POST_INDEX=${{ vars.POST_INDEX }}" >> $GITHUB_ENV
           fi
 
       - name: Post to Instagram
@@ -40,3 +38,11 @@ jobs:
           INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: python post_scheduled.py
+
+      - name: Commit updated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state.json
+          git diff --staged --quiet || git commit -m "Update post index [skip ci]"
+          git push
