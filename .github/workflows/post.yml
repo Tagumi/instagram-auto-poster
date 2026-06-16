@@ -2,8 +2,8 @@ name: Instagram Auto Post
 
 on:
   schedule:
-    - cron: '2 23 * * *'  # JST 8:02 (UTC 23:02 前日) - :00ちょうどは混雑回避のためずらす
-    - cron: '2 7 * * *'   # JST 16:02 (UTC 7:02) - 同上
+    - cron: '1 23 * * *'  # JST 8:01 (UTC 23:01 前日) - :00ちょうどは混雑回避のためずらす
+    - cron: '1 7 * * *'   # JST 16:01 (UTC 7:01) - 同上
   workflow_dispatch:
     inputs:
       post_index:
