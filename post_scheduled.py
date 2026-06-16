@@ -10,11 +10,21 @@ API_BASE = "https://graph.instagram.com/v25.0"
 POSTS_FILE = "posts.json"
 
 
+def resolve_url(url: str) -> str:
+    """Follow redirects to get the final image URL."""
+    r = requests.head(url, allow_redirects=True, timeout=10)
+    return r.url
+
+
 def create_container(image_url: str, caption: str) -> str:
+    final_url = resolve_url(image_url)
+    print(f"Image URL resolved: {final_url[:80]}")
     r = requests.post(
         f"{API_BASE}/{ACCOUNT_ID}/media",
-        data={"image_url": image_url, "caption": caption, "access_token": ACCESS_TOKEN},
+        data={"image_url": final_url, "caption": caption, "access_token": ACCESS_TOKEN},
     )
+    if not r.ok:
+        print(f"API error response: {r.text}")
     r.raise_for_status()
     return r.json()["id"]
 
