@@ -1,8 +1,12 @@
 import os
+import sys
 import json
 import time
 import requests
 from datetime import datetime
+
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 ACCOUNT_ID = os.environ["INSTAGRAM_ACCOUNT_ID"]
 ACCESS_TOKEN = os.environ["ACCESS_TOKEN"]
