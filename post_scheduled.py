@@ -34,7 +34,7 @@ def main():
         posts = json.load(f)
 
     # POST_INDEX secret/variable で何番目を投稿するか指定（省略時は0番目）
-    index = int(os.environ.get("POST_INDEX", "0")) % len(posts)
+    index = int(os.environ.get("POST_INDEX") or "0") % len(posts)
     post = posts[index]
 
     print(f"[{datetime.utcnow().isoformat()}] Index {index}: {post['caption'][:50]}")
